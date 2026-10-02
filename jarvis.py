@@ -1,31 +1,57 @@
 from datetime import datetime
 import json
+import speech_recognition as sr
+import pyttsx3
+
+recognizer = sr.Recognizer()
+engine = pyttsx3.init()
+def speak(text):
+    print("Jarvis:", text)
+    engine.say(text)
+    engine.runAndWait()
+speak("Hello, I am Jarvis")
+
+
 print("Jarvis here.")
 
 
 def User():
     while True:
 
-        command = input(" Ask Anything: ")
+        with sr.Microphone() as source:
+                print("Listening...")
+                audio = recognizer.listen(source)
+
+                try:
+                    command = recognizer.recognize_google(audio).lower()
+                    print("You:", command)
+
+                except sr.UnknownValueError:
+                    print("I didn't understand.")
+                    continue
+
+                except sr.RequestError:
+                    print("Speech service unavailable.")
+                    continue
         if command == "hello":
-            print("HI")
+            speak("HI")
 
         elif command == "name":
-            print("Jarvis")
+            speak("Jarvis")
 
         elif command == "help":
-            print("Available commands")
-            print("hello")
-            print("name")
-            print("date")
-            print("time")
-            print("exit")
+            speak("Available commands")
+            speak("hello")
+            speak("name")
+            speak("date")
+            speak("time")
+            speak("exit")
 
         elif command == "date":
-            print(datetime.now().date())
+            speak(datetime.now().date())
 
         elif command == "time":
-            print(datetime.now().strftime("%I:%M %p"))
+            speak(datetime.now().strftime("%I:%M %p"))
 
         elif command == "note":
             with open("notes.txt", "a") as f:
@@ -37,11 +63,11 @@ def User():
                 print(f.read())
 
         elif command == "exit":
-            print("Goodbye!")
+            speak("Goodbye!")
             break
 
         else:
-            print("I don't understand that command.")
+            speak("I don't understand that command.")
 
 
 User()
